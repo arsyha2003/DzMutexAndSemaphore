@@ -2,16 +2,25 @@ namespace DzMutexSemaphores
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
+        static Mutex[] mutexes = new Mutex[3];
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
+            for (int i = 0; i < mutexes.Length; i++)
+            {
+                mutexes[i] = new Mutex(true, $"LimitMutex1{i}");
+                if (mutexes[i].WaitOne(0)) break;
+                if (i == mutexes.Length - 1)
+                {
+                    MessageBox.Show("Приложение уже запущено в трех экземплярах.", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+            }
+
             ApplicationConfiguration.Initialize();
             Application.Run(new Form1());
+            foreach (var mutex in mutexes)
+                mutex.ReleaseMutex();
         }
     }
 }

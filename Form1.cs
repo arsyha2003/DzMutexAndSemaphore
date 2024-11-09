@@ -12,14 +12,6 @@ namespace DzMutexSemaphores
         {
 
         }
-        private void Thread1()
-        {
-            semaphore.WaitOne();
-            for (int i = 0; i < 10; i++)
-            {
-
-            }
-        }
 
     }
 }
