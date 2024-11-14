@@ -20,14 +20,13 @@ namespace DzMutexSemaphores
             Thread thread1 = new Thread(GenerateRandomNumbers);
             Thread thread2 = new Thread(ProcessNumbers);
             Thread thread3 = new Thread(ProcessNumbersEndingWith7);
-
+            mutex1 = new Mutex();
             thread1.Start();
             thread2.Start();
             thread3.Start();
         }
         private void GenerateRandomNumbers()
         {
-            mutex1 = new Mutex();
             try
             {
                 string path = "randomNumbers.txt";
@@ -82,9 +81,9 @@ namespace DzMutexSemaphores
                         }
                     }
                 }
-                mutex1.ReleaseMutex();
             }
             catch(Exception e) { MessageBox.Show(e.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            finally { mutex1.ReleaseMutex(); }
         }
         private void ProcessNumbersEndingWith7()
         {
@@ -111,10 +110,9 @@ namespace DzMutexSemaphores
                         }
                     }
                 }
-                MessageBox.Show("Процесс завершен. Файлы созданы.");
-                mutex1.ReleaseMutex();
             }
             catch (Exception e) { MessageBox.Show(e.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            finally { mutex1.ReleaseMutex(); }
         }
         private bool IsEasyNumber(int number)
         {
