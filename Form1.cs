@@ -6,6 +6,8 @@ namespace DzMutexSemaphores
     public partial class Form1 : Form
     {
         private Mutex mutex1;
+        private int countOfNumbers=0;
+        private int fileSize=0;//не вижу смысла логировать содержимое файлов, т.к его там слишком много должно быть
         public Form1()
         {
             InitializeComponent();
@@ -21,6 +23,16 @@ namespace DzMutexSemaphores
             Thread thread2 = new Thread(ProcessNumbers);
             Thread thread3 = new Thread(ProcessNumbersEndingWith7);
             mutex1 = new Mutex();
+            if (File.Exists("Log.txt"))
+            {
+                File.Delete("Log.txt");
+                Thread.Sleep(1000);
+                File.Create("Log.txt");
+            }
+            else
+            {
+                File.Create("Log.txt");
+            }
             thread1.Start();
             thread2.Start();
             thread3.Start();
@@ -34,6 +46,13 @@ namespace DzMutexSemaphores
                 for (int i = 0; i < 100; i++)
                 {
                     numbers.Add(new Random().Next(1, 1000));
+                }
+                using(FileStream fs = new FileStream("LogFile.txt", FileMode.Open, FileAccess.Write))
+                {
+                    using(StreamWriter sr = new StreamWriter(fs))
+                    {
+                        sr.Write("Количество чисел: "+numbers.Count );
+                    }
                 }
                 if (File.Exists(path))
                 {
@@ -108,6 +127,18 @@ namespace DzMutexSemaphores
                         {
                             sw.WriteLine(i);
                         }
+                    }
+                }
+                FileInfo fi = new FileInfo(path);
+                FileInfo fi2 = new FileInfo(path2);
+                FileInfo fi3 = new FileInfo("randomNumbers.txt");
+                using (FileStream fs = new FileStream("LogFile.txt", FileMode.Open, FileAccess.Write))
+                {
+                    using (StreamWriter sr = new StreamWriter(fs))
+                    {
+                        sr.Write($"Размер файла {path}: {fi.Length}");
+                        sr.Write($"Размер файла {path2}: {fi2.Length}");
+                        sr.Write($"Размер файла \"randomNumbers.txt\": {fi3.Length}");
                     }
                 }
             }
